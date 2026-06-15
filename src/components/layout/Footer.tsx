@@ -10,7 +10,7 @@ export function Footer() {
             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-maroon to-maroon-dark grid place-items-center text-gold-light text-xl">वि</div>
             <div className="font-display font-bold text-white">Var Kanya Parichay</div>
           </div>
-          <p className="text-sm opacity-80 max-w-xs">India's trusted marriage bureau — verified profiles, complete privacy, and a personal touch for every family.</p>
+          <p className="text-sm opacity-80 max-w-xs">India&apos;s trusted marriage bureau — verified profiles, complete privacy, and a personal touch for every family.</p>
           <div className="flex gap-2.5 mt-4">
             {[Facebook, Twitter, Linkedin, Youtube].map((I, i) => (
               <a key={i} href="#" className="w-9 h-9 rounded-lg bg-gold/10 grid place-items-center hover:bg-gold hover:text-maroon-deep transition-colors"><I size={16} /></a>
