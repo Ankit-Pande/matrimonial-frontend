@@ -21,6 +21,7 @@ export interface LoginResponse {
 // Ek profile ka pura data (backend ke field naam ke hisaab se).
 export interface Profile {
   id: string;
+  userId: string;
   name: string;
   gender: "MALE" | "FEMALE";
   dob?: string;

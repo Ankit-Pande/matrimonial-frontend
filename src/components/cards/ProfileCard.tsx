@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import Link from "next/link";
 import { Lock, Heart, BadgeCheck, MapPin } from "lucide-react";
 import type { Profile } from "@/types";
@@ -8,8 +9,19 @@ import { Button } from "@/components/ui/Button";
 // Photo lock backend ki privacy ke hisaab se (photoLocked).
 export function ProfileCard({ profile, onInterest }: {
   profile: Profile;
-  onInterest?: (id: string) => void;
+  onInterest?: (id: string) => Promise<void> | void;
 }) {
+  const [sending, setSending] = useState(false);
+
+  const handleInterest = async () => {
+    if (!onInterest) return;
+    setSending(true);
+    try {
+      await onInterest(profile.userId);
+    } finally {
+      setSending(false);
+    }
+  };
   const photo = profile.photos?.[0];
   const locked = profile.photoLocked || !photo;
 
@@ -60,7 +72,7 @@ export function ProfileCard({ profile, onInterest }: {
           {profile.maritalStatus && <Tag>{profile.maritalStatus.replace(/_/g, " ")}</Tag>}
         </div>
         {onInterest && (
-          <Button variant="primary" className="w-full text-sm py-2 press" onClick={() => onInterest(profile.id)}>
+          <Button variant="primary" className="w-full text-sm py-2 press" loading={sending} onClick={handleInterest}>
             <Heart size={15} /> Express Interest
           </Button>
         )}

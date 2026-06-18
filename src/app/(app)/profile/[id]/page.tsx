@@ -29,7 +29,7 @@ export default function ProfileDetailPage() {
   const photo = profile.photos?.[0];
   const sendInterest = async () => {
     try {
-      await interestApi.send(profile.id);
+      await interestApi.send(profile.userId);
       setToast("Interest sent!");
     } catch (err) {
       setToast(getApiError(err));
