@@ -21,7 +21,8 @@ export function ProfileCard({ profile, onInterest }: {
           <div className="arch overflow-hidden h-52 bg-gradient-to-br from-[#EFE2CC] to-[#DEC9AE] grid place-items-center text-maroon text-5xl relative border-[3px] border-gold-light/60">
             {locked ? (
               <>
-                {profile.gender === "FEMALE" ? "👰" : "🤵"}
+                {/* Clean placeholder — naam ka pehla akshar (emoji ki jagah, professional) */}
+                <span className="font-display text-6xl text-maroon/30">{profile.name?.[0]?.toUpperCase() || "?"}</span>
                 <div className="absolute inset-0 bg-maroon-deep/45 backdrop-blur-sm grid place-items-center text-white">
                   <div className="text-center">
                     <Lock className="mx-auto" size={20} />

@@ -9,7 +9,7 @@ import { Toast } from "@/components/ui/Toast";
 import { Select } from "@/components/ui/Select";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
-import { RELIGIONS, MARITAL_STATUS, PROFESSION, MANGLIK, DIET } from "@/config/constants";
+import { PROFESSION } from "@/config/constants";
 import type { SearchParams } from "@/lib/api/search.api";
 
 export default function SearchPage() {
@@ -45,19 +45,12 @@ export default function SearchPage() {
         Find Your Match
       </h1>
 
-      {/* Filters */}
+      {/* Filters - simple: city, state, profession, caste */}
       <div className="card p-4 mb-6 grid grid-cols-2 md:grid-cols-4 gap-3">
-        <Select label="Religion" options={RELIGIONS} placeholder="Any" onChange={(e) => setFilter("religion", e.target.value)} />
-        <Input label="Caste" placeholder="Any" onChange={(e) => setFilter("caste", e.target.value)} />
-        <Select label="Marital Status" options={MARITAL_STATUS} placeholder="Any" onChange={(e) => setFilter("maritalStatus", e.target.value)} />
-        <Select label="Profession" options={PROFESSION} placeholder="Any" onChange={(e) => setFilter("professionType", e.target.value)} />
-        <Select label="Manglik" options={MANGLIK} placeholder="Any" onChange={(e) => setFilter("manglikStatus", e.target.value)} />
-        <Select label="Diet" options={DIET} placeholder="Any" onChange={(e) => setFilter("diet", e.target.value)} />
         <Input label="City" placeholder="Any" onChange={(e) => setFilter("city", e.target.value)} />
-        <div className="grid grid-cols-2 gap-2">
-          <Input label="Min Age" type="number" onChange={(e) => setFilter("minAge", e.target.value)} />
-          <Input label="Max Age" type="number" onChange={(e) => setFilter("maxAge", e.target.value)} />
-        </div>
+        <Input label="State" placeholder="Any" onChange={(e) => setFilter("state", e.target.value)} />
+        <Select label="Profession" options={PROFESSION} placeholder="Any" onChange={(e) => setFilter("professionType", e.target.value)} />
+        <Input label="Caste" placeholder="Any" onChange={(e) => setFilter("caste", e.target.value)} />
         <div className="col-span-2 md:col-span-4">
           <Button variant="primary" onClick={() => runSearch(filters)}>
             Apply Filters

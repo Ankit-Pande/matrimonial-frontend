@@ -40,10 +40,12 @@ api.interceptors.response.use(
   async (error) => {
     const original = error.config;
 
-    // "User not found" (404) — token to valid hai par DB me user nahi (jaise DB reset hua).
-    // Ye case me bhi logout karke login pe bhej do (purana token saaf).
+    // Sirf /auth/me ya /user/me pe "user not found" aaye to logout (apna account gaya).
+    // Dusre profile/interest pe "User not found" se logout NAHI karna.
     const msg = error.response?.data?.message || "";
-    if (error.response?.status === 404 && /user not found|user nahi mila/i.test(msg)) {
+    const url = original?.url || "";
+    const isOwnAccountCheck = url.includes("/user/me") || url.includes("/auth/me");
+    if (error.response?.status === 404 && isOwnAccountCheck && /user not found/i.test(msg)) {
       tokenStore.clear();
       if (typeof window !== "undefined") window.location.href = "/login";
       return Promise.reject(error);

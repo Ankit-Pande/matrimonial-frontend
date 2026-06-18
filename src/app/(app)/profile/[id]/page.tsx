@@ -51,7 +51,7 @@ export default function ProfileDetailPage() {
         <div className="arch overflow-hidden mx-auto mt-6 max-w-sm h-80 bg-gradient-to-br from-[#EFE2CC] to-[#DEC9AE] grid place-items-center text-maroon text-6xl relative border-[3px] border-gold-light/60">
           {profile.photoLocked || !photo ? (
             <>
-              {profile.gender === "FEMALE" ? "👰" : "🤵"}
+              <span className="font-display text-7xl text-maroon/30">{profile.name?.[0]?.toUpperCase() || "?"}</span>
               <div className="absolute inset-0 bg-maroon-deep/40 backdrop-blur-sm grid place-items-center text-white">
                 <div className="text-center"><Lock className="mx-auto" /><span className="text-xs bg-gold text-[#3A2A10] px-3 py-1 rounded-full font-semibold mt-2 inline-block">Premium to view photo</span></div>
               </div>

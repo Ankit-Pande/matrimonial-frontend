@@ -2,10 +2,11 @@
 import { useEffect, useState } from "react";
 import { Check, Crown, BadgeCheck } from "lucide-react";
 import { membershipApi } from "@/lib/api/membership.api";
+import { useAuthStore } from "@/store/authStore";
 import { getApiError } from "@/lib/api/client";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { Button } from "@/components/ui/Button";
-import type { Plan } from "@/types";
+import type { Plan, Membership } from "@/types";
 
 // Razorpay popup ka type (window pe Razorpay aata hai script load hone par).
 // Payment success pe Razorpay ye deta hai — isi se verify hota hai.
@@ -24,6 +25,7 @@ interface RazorpayOptions {
   description: string;
   handler: (response: RazorpayPaymentResponse) => void;
   theme: { color: string };
+  prefill: { contact?: string };
   // Kaun se payment method allow honge.
   method: {
     upi: boolean;
@@ -39,7 +41,7 @@ interface RazorpayOptions {
       blocks: {
         [key: string]: {
           name: string;
-          instruments: { method: string }[];
+          instruments: { method: string; flows?: string[] }[];
         };
       };
       sequence: string[];
@@ -73,6 +75,8 @@ const PREMIUM_FEATURES = [
 ];
 
 export default function MembershipPage() {
+  const { user } = useAuthStore();
+  const [membership, setMembership] = useState<Membership | null>(null);
   const [plans, setPlans] = useState<Plan[]>([]);
   const [loadingPlans, setLoadingPlans] = useState(true);
   const [buyingPlan, setBuyingPlan] = useState<string | null>(null);
@@ -86,6 +90,8 @@ export default function MembershipPage() {
       .then((p) => setPlans(p))
       .catch((err) => setError(getApiError(err)))
       .finally(() => setLoadingPlans(false));
+    // Apna premium status bhi lao (expiry date dikhane ke liye).
+    membershipApi.myMembership().then(setMembership).catch(() => {});
   }, []);
 
   // Razorpay ka script ek baar load karo.
@@ -132,6 +138,7 @@ export default function MembershipPage() {
           }
         },
         theme: { color: "#8B1E3F" },
+        prefill: { contact: user?.phone },
         // Sirf UPI (GPay/PhonePe/Paytm) aur card allow karo.
         // method config se baaki (netbanking, wallet, emi, paylater) band.
         method: {
@@ -146,8 +153,10 @@ export default function MembershipPage() {
           display: {
             blocks: {
               upiblock: {
-                name: "Pay using UPI (GPay, PhonePe, Paytm)",
-                instruments: [{ method: "upi" }],
+                name: "Pay using UPI",
+                instruments: [
+                  { method: "upi", flows: ["collect", "intent", "qr"] },
+                ],
               },
               cardblock: {
                 name: "Credit / Debit Card",
@@ -173,6 +182,37 @@ export default function MembershipPage() {
         <h1 className="gold-line gold-line-center inline-block font-display text-3xl text-maroon">Choose Your Plan</h1>
         <p className="text-muted mt-2">Upgrade to premium and unlock all features.</p>
       </div>
+
+      {/* Active premium ho to status card — kab tak valid hai saaf dikhe */}
+      {membership?.isPremium && membership.subscriptionExpiresAt && (
+        <div className="max-w-3xl mx-auto mb-8">
+          <div className="rounded-2xl p-6 bg-gradient-to-br from-maroon to-maroon-deep text-white shadow-lift relative overflow-hidden">
+            <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-gold/20 blur-2xl" />
+            <div className="flex items-center gap-2 mb-2">
+              <BadgeCheck size={22} className="text-gold-light" />
+              <h3 className="font-display text-xl">You are a Premium Member</h3>
+            </div>
+            {(() => {
+              const expiry = new Date(membership.subscriptionExpiresAt);
+              const daysLeft = Math.ceil((expiry.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+              const dateStr = expiry.toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" });
+              return (
+                <>
+                  <p className="text-white/90 text-sm">Valid until <b>{dateStr}</b></p>
+                  <p className="text-gold-light text-sm mt-1">
+                    {daysLeft > 0 ? `${daysLeft} day${daysLeft > 1 ? "s" : ""} remaining` : "Expiring today"}
+                  </p>
+                  {daysLeft <= 7 && (
+                    <p className="text-white/80 text-xs mt-3 bg-white/10 rounded-lg px-3 py-2">
+                      Your premium is ending soon. Renew below to keep full access to photos, contacts and unlimited interests.
+                    </p>
+                  )}
+                </>
+              );
+            })()}
+          </div>
+        </div>
+      )}
 
       {/* Free vs Premium - saaf saaf kaun kya kar sakta hai */}
       <div className="grid sm:grid-cols-2 gap-4 max-w-3xl mx-auto mb-10">

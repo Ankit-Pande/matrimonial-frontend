@@ -62,41 +62,52 @@ export default function LoginPage() {
       </div>
 
       {/* right form */}
-      <div className="flex items-center justify-center p-6">
+      <div className="flex items-center justify-center p-6 bg-cream">
         <div className="w-full max-w-sm">
-          <Link href="/" className="md:hidden font-display text-xl text-maroon block mb-8 text-center">Var Kanya Parichay</Link>
-          <h1 className="font-display text-3xl text-maroon mb-2">
-            {step === "phone" ? "Login / Register" : "Verify OTP"}
-          </h1>
-          <p className="text-muted text-sm mb-6">
-            {step === "phone" ? "Enter your mobile number to continue" : `OTP sent to ${phone}`}
+          {/* Mobile pe arch logo + brand (left panel hidden hota hai) */}
+          <Link href="/" className="md:hidden flex flex-col items-center mb-6">
+            <div className="w-14 h-16 arch bg-gradient-to-b from-maroon to-maroon-deep grid place-items-center text-gold-light text-2xl border border-gold/40 mb-2">वि</div>
+            <span className="font-display text-xl text-maroon">Var Kanya Parichay</span>
+          </Link>
+
+          <div className="card p-6 md:p-7 shadow-lift">
+            <h1 className="font-display text-3xl text-maroon mb-2">
+              {step === "phone" ? "Login / Register" : "Verify OTP"}
+            </h1>
+            <p className="text-muted text-sm mb-6">
+              {step === "phone" ? "Enter your mobile number to continue" : `OTP sent to ${phone}`}
+            </p>
+
+            {error && <div className="bg-red-50 text-red-600 text-sm rounded-lg px-3 py-2 mb-4">{error}</div>}
+
+            {step === "phone" ? (
+              <div className="space-y-4">
+                <Input label="Mobile Number" placeholder="9876543210" value={phone}
+                  onChange={(e) => setPhone(e.target.value)} inputMode="numeric" />
+                <Button variant="gold" className="w-full" loading={loading}
+                  onClick={sendOtp} disabled={phone.length < 10}>Send OTP</Button>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {demoOtp && (
+                  <div className="bg-gold/10 border border-gold/40 rounded-xl px-4 py-3 text-center">
+                    <p className="text-xs text-muted">Demo mode — your OTP is</p>
+                    <p className="font-display text-2xl text-maroon tracking-widest">{demoOtp}</p>
+                  </div>
+                )}
+                <Input label="Enter 6-digit OTP" placeholder="••••••" value={otp}
+                  onChange={(e) => setOtp(e.target.value)} inputMode="numeric" maxLength={6} />
+                <Button variant="gold" className="w-full" loading={loading}
+                  onClick={verify} disabled={otp.length !== 6}>Verify & Continue</Button>
+                <button onClick={() => { setStep("phone"); setOtp(""); setError(""); }}
+                  className="text-sm text-muted hover:text-maroon w-full text-center">← Change number</button>
+              </div>
+            )}
+          </div>
+
+          <p className="text-center text-xs text-muted mt-5">
+            By continuing you agree to our terms & privacy policy.
           </p>
-
-          {error && <div className="bg-red-50 text-red-600 text-sm rounded-lg px-3 py-2 mb-4">{error}</div>}
-
-          {step === "phone" ? (
-            <div className="space-y-4">
-              <Input label="Mobile Number" placeholder="9876543210" value={phone}
-                onChange={(e) => setPhone(e.target.value)} inputMode="numeric" />
-              <Button variant="gold" className="w-full" loading={loading}
-                onClick={sendOtp} disabled={phone.length < 10}>Send OTP</Button>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {demoOtp && (
-                <div className="bg-gold/10 border border-gold/40 rounded-xl px-4 py-3 text-center">
-                  <p className="text-xs text-muted">Demo mode — your OTP is</p>
-                  <p className="font-display text-2xl text-maroon tracking-widest">{demoOtp}</p>
-                </div>
-              )}
-              <Input label="Enter 6-digit OTP" placeholder="••••••" value={otp}
-                onChange={(e) => setOtp(e.target.value)} inputMode="numeric" maxLength={6} />
-              <Button variant="gold" className="w-full" loading={loading}
-                onClick={verify} disabled={otp.length !== 6}>Verify & Continue</Button>
-              <button onClick={() => { setStep("phone"); setOtp(""); setError(""); }}
-                className="text-sm text-muted hover:text-maroon w-full text-center">← Change number</button>
-            </div>
-          )}
         </div>
       </div>
     </div>

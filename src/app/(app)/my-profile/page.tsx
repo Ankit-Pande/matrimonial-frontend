@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { userApi } from "@/lib/api/user.api";
 import { getApiError } from "@/lib/api/client";
 import { profileSchema } from "@/lib/profileSchema";
@@ -23,6 +24,8 @@ export default function MyProfilePage() {
   const [pendingPhoto, setPendingPhoto] = useState<File | null>(null);
   const [pendingPreview, setPendingPreview] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
+  const [isError, setIsError] = useState(false);
+  const router = useRouter();
 
   // Page khulte hi apna profile lao. Na mile to naya banana hai.
   useEffect(() => {
@@ -76,13 +79,19 @@ export default function MyProfilePage() {
           setPendingPreview("");
         }
         setIsNew(false);
-        setSuccessMsg("Profile created successfully!");
-        setTimeout(() => photoRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
+        setIsError(false);
+        setSuccessMsg("Profile created successfully! Taking you to your dashboard...");
+        // Top pe le jao taaki success card dikhe, phir dashboard.
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        setTimeout(() => router.push("/dashboard"), 1800);
       } else {
         await userApi.updateProfile(payload);
+        setIsError(false);
         setSuccessMsg("Profile saved successfully!");
+        window.scrollTo({ top: 0, behavior: "smooth" });
       }
     } catch (err) {
+      setIsError(true);
       setSuccessMsg(getApiError(err));
     } finally {
       setSaving(false);
@@ -104,6 +113,7 @@ export default function MyProfilePage() {
       const res = await userApi.uploadPhoto(file);
       setProfile((prev) => ({ ...prev, photos: res.photos }));
     } catch (err) {
+      setIsError(true);
       setSuccessMsg(getApiError(err));
     } finally {
       setPhotoBusy(false);
@@ -117,6 +127,7 @@ export default function MyProfilePage() {
       const res = await userApi.deletePhoto(url);
       setProfile((prev) => ({ ...prev, photos: res.photos }));
     } catch (err) {
+      setIsError(true);
       setSuccessMsg(getApiError(err));
     } finally {
       setPhotoBusy(false);
@@ -354,9 +365,17 @@ export default function MyProfilePage() {
         {isNew ? "Create Profile" : "Save Changes"}
       </Button>
 
-      {/* Success ya error message - Save button ke theek niche */}
+      {/* Success ya error message - bada card, top pe scroll hota hai */}
       {successMsg && (
-        <p className="text-center text-sm mt-3 text-maroon font-medium">{successMsg}</p>
+        <div
+          className={`mt-4 rounded-xl px-5 py-4 text-center font-medium ${
+            isError
+              ? "bg-red-50 text-red-600 border border-red-200"
+              : "bg-sky-50 text-sky-700 border border-sky-200"
+          }`}
+        >
+          {successMsg}
+        </div>
       )}
     </div>
   );

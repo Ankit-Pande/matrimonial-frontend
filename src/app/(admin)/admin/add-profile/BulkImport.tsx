@@ -37,7 +37,14 @@ export function BulkImport() {
 
   // Sample CSV download — admin isme bharke wapas upload kare.
   const downloadTemplate = () => {
-    const csv = COLUMNS.join(",") + "\n";
+    // Header + ek example row (admin ko samajh aaye kya bharna hai).
+    const example = [
+      "Rahul Sharma", "9876543210", "MALE", "1995-06-15", "NEVER_MARRIED", "Hindi",
+      "Hindu", "Brahmin", "Kashyap", "NON_MANGLIK", "VEG",
+      "175", "70", "B.Tech", "PRIVATE_JOB", "Software Engineer",
+      "Infosys", "800000", "Maharashtra", "Pune",
+    ];
+    const csv = COLUMNS.join(",") + "\n" + example.join(",") + "\n";
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
