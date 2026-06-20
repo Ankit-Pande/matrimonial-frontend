@@ -92,7 +92,7 @@ export interface Interest {
 
 interface InterestUser {
   id: string;
-  profile?: { name: string; photos: string[] };
+  profile?: { id: string; name: string; photos: string[] };
 }
 
 // Membership plan (price paise me aata hai backend se).

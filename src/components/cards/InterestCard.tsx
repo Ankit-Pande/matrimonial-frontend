@@ -23,10 +23,10 @@ export function InterestCard({ interest, type, onRespond }: {
         {photo ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={photo} alt={name} className="w-full h-full object-cover" />
-        ) : "👤"}
+        ) : <span className="font-display text-maroon/40">{name[0]?.toUpperCase()}</span>}
       </div>
       <div className="flex-1 min-w-0">
-        <Link href={`/profile/${other?.id}`} className="font-display text-base hover:text-maroon">{name}</Link>
+        <Link href={`/profile/${other?.profile?.id}`} className="font-display text-base hover:text-maroon">{name}</Link>
         <div className={`text-xs font-semibold ${statusColor}`}>{interest.status}</div>
       </div>
       {type === "received" && interest.status === "PENDING" && onRespond && (
